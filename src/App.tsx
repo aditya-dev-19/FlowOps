@@ -1,202 +1,116 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { 
-  motion, 
-  useMotionValue, 
-  useMotionTemplate, 
-  useAnimationFrame 
-} from "framer-motion";
-import { MousePointerClick, Info, Sun, Moon, Settings2, Zap } from 'lucide-react';
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import React from 'react';
+import './App.css'; // Optional: for styling
+import { NavBar } from './Navbar';
+import {Hero} from './InfiniteGrid';
+import { Feature } from './FeaturesSection';
+import { Home, Zap, Settings, DollarSign, MessageSquare, Mail } from 'lucide-react';
+import step1Image from './assets/ChatGPT Image Dec 26, 2025, 09_12_12 PM.png';
+import step2Image from './assets/ChatGPT Image Dec 26, 2025, 09_13_36 PM.png';
+import step3Image from './assets/ChatGPT Image Dec 26, 2025, 09_29_34 PM.png';
+import { FeatureSteps } from './WorkingSection';
+import { Pricing } from './PricingSection';
+import { TypewriterEffect } from './CTASection';
+import { Footer } from './Footer';
+import { TestimonialsSection } from './TestimonialsSection';
+import InfiniteGrid from './InfiniteGrid';
 
-/**
- * Standard Shadcn utility for merging Tailwind classes safely.
- */
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-/**
- * Helper component for the SVG grid pattern.
- */
-const GridPattern = ({ offsetX, offsetY, size }: { offsetX: any; offsetY: any; size: number }) => {
-  return (
-    <svg className="w-full h-full">
-      <defs>
-        <motion.pattern
-          id="grid-pattern"
-          width={size}
-          height={size}
-          patternUnits="userSpaceOnUse"
-          x={offsetX}
-          y={offsetY}
-        >
-          <path
-            d={`M ${size} 0 L 0 0 0 ${size}`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1"
-            className="text-muted-foreground" 
-          />
-        </motion.pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#grid-pattern)" />
-    </svg>
-  );
-};
-
-/**
- * The Infinite Grid Component
- * Displays a scrolling background grid that reveals an active layer on mouse hover.
- */
-const InfiniteGrid = () => {
-  const [count, setCount] = useState(0);
-  const [gridSize, setGridSize] = useState(40);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Track mouse position with Motion Values for performance (avoids React re-renders)
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const { left, top } = e.currentTarget.getBoundingClientRect();
-    mouseX.set(e.clientX - left);
-    mouseY.set(e.clientY - top);
-  };
-
-  // Grid offsets for infinite scroll animation
-  const gridOffsetX = useMotionValue(0);
-  const gridOffsetY = useMotionValue(0);
-
-  const speedX = 0.5; 
-  const speedY = 0.5;
-
-  useAnimationFrame(() => {
-    const currentX = gridOffsetX.get();
-    const currentY = gridOffsetY.get();
-    // Reset offset at pattern width to simulate infinity
-    gridOffsetX.set((currentX + speedX) % gridSize);
-    gridOffsetY.set((currentY + speedY) % gridSize);
-  });
-
-  // Create a dynamic radial mask for the "flashlight" effect
-  const maskImage = useMotionTemplate`radial-gradient(300px circle at ${mouseX}px ${mouseY}px, black, transparent)`;
-
-  return (
-    <div
-      ref={containerRef}
-      onMouseMove={handleMouseMove}
-      className={cn(
-        "relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-background"
-      )}
-    >
-      {/* Layer 1: Subtle background grid (always visible) */}
-      <div className="absolute inset-0 z-0 opacity-[0.05]">
-        <GridPattern offsetX={gridOffsetX} offsetY={gridOffsetY} size={gridSize} />
-      </div>
-
-      {/* Layer 2: Highlighted grid (revealed by mouse mask) */}
-      <motion.div 
-        className="absolute inset-0 z-0 opacity-40"
-        style={{ maskImage, WebkitMaskImage: maskImage }}
-      >
-        <GridPattern offsetX={gridOffsetX} offsetY={gridOffsetY} size={gridSize} />
-      </motion.div>
-
-      {/* Decorative Blur Spheres */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute right-[-20%] top-[-20%] w-[40%] h-[40%] rounded-full bg-orange-500/40 dark:bg-orange-600/20 blur-[120px]" />
-        <div className="absolute right-[10%] top-[-10%] w-[20%] h-[20%] rounded-full bg-primary/30 blur-[100px]" />
-        <div className="absolute left-[-10%] bottom-[-20%] w-[40%] h-[40%] rounded-full bg-blue-500/40 dark:bg-blue-600/20 blur-[120px]" />
-      </div>
-
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-3xl mx-auto space-y-6 pointer-events-none">
-        <div className="space-y-2">
-          <h1 className="text-4xl md:text-6xl font-semibold tracking-tight text-foreground drop-shadow-sm flex items-center justify-center gap-4">
-            <Zap className="w-12 h-12 md:w-16 md:h-16 text-yellow-500" />
-            FlowOps
-          </h1>
-          <p className="text-lg md:text-xl font-semibold text-muted-foreground">
-            Stop Doing Repetitive Work. Start Automating Everything. <br/>
-            FlowOps helps startups and small teams automate emails, reports, and task syncing with AI-powered workflows. Save 10+ hours per week.
-          </p>
-        </div>
-        
-        <div className="flex gap-4 pointer-events-auto">
-          <motion.button 
-              onClick={() => setCount(count + 1)}
-              whileHover={{ 
-                scale: 1.05, 
-                y: -4,
-                backgroundColor: "#4338ca", // Indigo-700 (Deeper shift)
-                borderColor: "#6366f1",     // Indigo-500 border highlight
-                color: "#ffffff",
-                boxShadow: "0 25px 50px -12px rgba(67, 56, 202, 0.6)" // Pronounced shadow grow
-              }}
-              whileTap={{ scale: 0.98, y: 0 }}
-              transition={{ type: "spring", stiffness: 400, damping: 15 }}
-              className="flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-md shadow-md border-2 border-transparent transition-colors"
-          >
-              <MousePointerClick className="w-4 h-4" />
-              Start Free 14-Day Trial
-          </motion.button>
-          
-          <motion.button 
-              whileHover={{ 
-                scale: 1.05, 
-                y: -4, 
-                backgroundColor: "#6d28d9", // Violet-700 (Deeper shift)
-                borderColor: "#8b5cf6",     // Violet-500 border highlight
-                color: "#ffffff",
-                boxShadow: "0 25px 50px -12px rgba(109, 40, 217, 0.6)" // Pronounced shadow grow
-              }}
-              whileTap={{ scale: 0.98, y: 0 }}
-              transition={{ type: "spring", stiffness: 400, damping: 15 }}
-              className="flex items-center gap-2 px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-md border-2 border-transparent transition-colors"
-          >
-              <Info className="w-4 h-4" />
-              Watch Demo
-          </motion.button>
-        </div>
-      </div>
-    </div>
-  );
-};
+const navitems = [
+  { name: 'Home', url: '#home', icon: Home },
+  { name: 'Testimonials', url: '#testimonials', icon: Zap },
+  { name: 'Features', url: '#features', icon: Settings },
+  { name: 'Working', url: '#working', icon: DollarSign },
+  { name: 'Pricing', url: '#pricing', icon: MessageSquare },
+  { name: 'Contact', url: '#footer', icon: Mail },
+]
 
 const App: React.FC = () => {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    // Sync dark mode state with HTML class
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+  // Reveal Animation variants
+  const revealVariants = {
+    hidden: { opacity: 0, y: 30, filter: "blur(10px)" },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      filter: "blur(0px)",
+      transition: { duration: 0.8, ease: "easeOut" } 
     }
-  }, [isDark]);
-
+  };
   return (
-    <div className="w-full relative min-h-screen">
-      {/* Sticky Theme Toggle */}
-      <button
-        onClick={() => setIsDark(!isDark)}
-        className="fixed top-4 right-4 z-50 p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border shadow-lg hover:scale-110 active:scale-95 transition-all flex items-center justify-center group"
-        aria-label="Toggle Theme"
-      >
-        {isDark ? (
-          <Sun className="w-5 h-5 text-yellow-500 group-hover:rotate-45 transition-transform" />
-        ) : (
-          <Moon className="w-5 h-5 text-indigo-500 group-hover:-rotate-12 transition-transform" />
-        )}
-      </button>
-
-      {/* Main Content */}
+    <div className='relative min-h-screen'>
+      <InfiniteGrid/> {/*only infinite grid component needs to come here...rest of the content of hero section should be inside main */}
+      <NavBar items = {navitems}/>
       <main>
-        <InfiniteGrid />
+        <section id = "home"><Hero/></section>
+        <section id = "testimonials">
+            <TestimonialsSection title={'TRUSTED BY INNOVATIVE TEAMS WORLDWIDE'} description={'No credit card required • Setup in 5 minutes • Cancel anytime'} testimonials={[{
+                author: {
+                  name: "Emma Thompson",
+                  handle: "@emmaai",
+                  avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face"
+                },
+                text: "Using this AI platform has transformed how we handle data analysis. The speed and accuracy are unprecedented.",
+                href: "https://twitter.com/emmaai"
+              },
+              {
+                author: {
+                  name: "David Park",
+                  handle: "@davidtech",
+                  avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+                },
+                text: "The API integration is flawless. We've reduced our development time by 60% since implementing this solution.",
+                href: "https://twitter.com/davidtech"
+              },
+              {
+                author: {
+                  name: "Sofia Rodriguez",
+                  handle: "@sofiaml",
+                  avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face"
+                },
+                text: "Finally, an AI tool that actually understands context! The accuracy in natural language processing is impressive."
+              }]} />
+        </section>
+        <section id = "features"><Feature/></section>
+          <section id = "working">
+            <FeatureSteps features={[
+              { 
+                step: 'Step 1', 
+                title: 'Connect Your Tools',
+                content: 'Link your existing apps and platforms in seconds with our pre-built integrations.', 
+                image: step1Image
+              },
+              { 
+                step: 'Step 2', 
+                title: 'Build Your Flow',
+                content: 'Use our visual builder to create automation workflows without any coding required.', 
+                image: step2Image 
+              },
+              { 
+                step: 'Step 3', 
+                title: 'Activate & Scale ',
+                content: 'Turn on your automations and watch them work 24/7 while you focus on growth.', 
+                image: step3Image 
+              },
+            ]}/>
+          </section>
+        <section id = "pricing"><Pricing/></section>
+        <section id = "footer"><TypewriterEffect words={[
+            { text: "Ready" },
+            { text: "to" },
+            { text: "Automate" },
+            { text: "Your"},
+            { text: "Workflows?", className: "text-blue-300" }
+          ]}
+          className="mb-8"
+          cursorClassName="bg-white"
+        />
+        <p className="text-lg mb-6">Join thousands of teams saving 10+ hours per week with FlowOps.</p>
+        <button className="px-8 py-3 mb-20 bg-white text-indigo-600 font-semibold rounded-lg hover:bg-gray-100 transition border-1">
+          Start Free Trial
+        </button>
+        </section>
       </main>
+      <Footer/>
     </div>
   );
-};
+}
 
 export default App;

@@ -128,11 +128,19 @@
   --brand-foreground: hsl(270 100% 98%);
 }
 
+/* src/index.css */
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+  html {
+    scroll-behavior: smooth; /* Essential for the Navbar links */
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased; /* antialiased makes text look sharper */
+  }
+
+  /* Custom selection color to match your Primary color */
+  ::selection {
+    background-color: oklch(var(--primary) / 0.2);
+    color: oklch(var(--primary));
   }
 }

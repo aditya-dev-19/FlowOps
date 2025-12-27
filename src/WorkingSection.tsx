@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 
+// import { BrowserMockup } from "./BrowserMockup"
 interface Feature {
   step: string
   title?: string
@@ -20,104 +21,122 @@ interface FeatureStepsProps {
 function cn(...classes: (string | undefined | null | false)[]) {
   return classes.filter(Boolean).join(' ')
 }
+// Add this helper component inside WorkingSection.tsx
+const BrowserMockup = ({ children }: { children: React.ReactNode }) => (
+  <div className="relative w-full rounded-xl border border-border bg-card shadow-2xl overflow-hidden">
+    {/* Browser Header */}
+    <div className="flex items-center gap-1.5 px-4 py-3 border-b border-border bg-muted/50">
+      <div className="flex gap-1.5">
+        <div className="w-2.5 h-2.5 rounded-full bg-red-500/20 border border-red-500/40" />
+        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/20 border border-yellow-500/40" />
+        <div className="w-2.5 h-2.5 rounded-full bg-green-500/20 border border-green-500/40" />
+      </div>
+      <div className="mx-auto w-1/2 h-5 rounded-md bg-background/50 border border-border flex items-center justify-center">
+        <span className="text-[10px] text-muted-foreground font-mono">flowops.com/dashboard</span>
+      </div>
+    </div>
+    {/* Browser Content */}
+    <div className="relative aspect-video bg-muted">
+      {children}
+    </div>
+  </div>
+);
 
+// src/WorkingSection.tsx refactored
 export function FeatureSteps({
   features,
   className,
   title = "How it works?",
-  autoPlayInterval = 3000,
-  imageHeight = "h-[400px]",
+  autoPlayInterval = 4000,
 }: FeatureStepsProps) {
-  const [currentFeature, setCurrentFeature] = useState(0)
-  const [progress, setProgress] = useState(0)
+  const [currentFeature, setCurrentFeature] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
       if (progress < 100) {
-        setProgress((prev) => prev + 100 / (autoPlayInterval / 100))
+        setProgress((prev) => prev + 100 / (autoPlayInterval / 100));
       } else {
-        setCurrentFeature((prev) => (prev + 1) % features.length)
-        setProgress(0)
+        setCurrentFeature((prev) => (prev + 1) % features.length);
+        setProgress(0);
       }
-    }, 100)
-
-    return () => clearInterval(timer)
-  }, [progress, features.length, autoPlayInterval])
+    }, 100);
+    return () => clearInterval(timer);
+  }, [progress, features.length, autoPlayInterval]);
 
   return (
-    <div className={cn("p-8 md:p-12", className)}>
-      <div className="max-w-7xl mx-auto w-full">
-        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-10 text-center">
-          {title}
+    <div className={cn("py-24 px-8 md:px-12", className)}>
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-4xl md:text-6xl font-bold mb-20 text-center tracking-tight">
+          Built for <span className="text-primary">Speed</span>
         </h2>
 
-        <div className="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-10">
-          <div className="order-2 md:order-1 space-y-8">
+        <div className="grid md:grid-cols-2 gap-16 items-start">
+          {/* LEFT: Interactive Steps */}
+          <div className="space-y-4">
             {features.map((feature, index) => (
-              <motion.div
+              <div 
                 key={index}
-                className="flex items-center gap-6 md:gap-8"
-                initial={{ opacity: 0.3 }}
-                animate={{ opacity: index === currentFeature ? 1 : 0.3 }}
-                transition={{ duration: 0.5 }}
+                onClick={() => { setCurrentFeature(index); setProgress(0); }}
+                className={cn(
+                  "relative p-6 rounded-2xl transition-all cursor-pointer border-2 border-transparent",
+                  index === currentFeature ? "bg-muted/50 border-border shadow-sm" : "hover:bg-muted/30"
+                )}
               >
-                <motion.div
-                  className={cn(
-                    "w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center border-2",
-                    index === currentFeature
-                      ? "bg-primary border-primary text-primary-foreground scale-110"
-                      : "bg-muted border-muted-foreground",
-                  )}
-                >
-                  {index <= currentFeature ? (
-                    <span className="text-lg font-bold">✓</span>
-                  ) : (
-                    <span className="text-lg font-semibold">{index + 1}</span>
-                  )}
-                </motion.div>
+                {/* Progress Fill Indicator (Inside the card) */}
+                {index === currentFeature && (
+                  <motion.div 
+                    layoutId="active-step-bar"
+                    className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-2xl"
+                    initial={{ height: 0 }}
+                    animate={{ height: `${progress}%` }}
+                    transition={{ ease: "linear" }}
+                  />
+                )}
 
-                <div className="flex-1">
-                  <h3 className="text-xl md:text-2xl font-semibold">
-                    {feature.title || feature.step}
-                  </h3>
-                  <p className="text-sm md:text-lg text-muted-foreground">
-                    {feature.content}
-                  </p>
+                <div className="flex items-start gap-4">
+                  <div className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center shrink-0 border",
+                    index === currentFeature ? "bg-primary text-primary-foreground border-primary" : "text-muted-foreground border-border"
+                  )}>
+                    {index + 1}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold mb-2">{feature.title || feature.step}</h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {feature.content}
+                    </p>
+                  </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
 
-          <div
-            className={cn(
-              "order-1 md:order-2 relative h-[200px] md:h-[300px] lg:h-[400px] overflow-hidden rounded-lg"
-            )}
-          >
-            <AnimatePresence mode="wait">
-              {features.map(
-                (feature, index) =>
-                  index === currentFeature && (
-                    <motion.div
-                      key={index}
-                      className="absolute inset-0 rounded-lg overflow-hidden"
-                      initial={{ y: 100, opacity: 0, rotateX: -20 }}
-                      animate={{ y: 0, opacity: 1, rotateX: 0 }}
-                      exit={{ y: -100, opacity: 0, rotateX: 20 }}
-                      transition={{ duration: 0.5, ease: "easeInOut" }}
-                    >
-                      <img
-                        src={feature.image}
-                        alt={feature.step}
-                        className="w-full h-full object-cover transition-transform transform"
-                      />
-                      <div className="absolute bottom-0 left-0 right-0 h-2/3 bg-gradient-to-t from-background via-background/50 to-transparent" />
-                    </motion.div>
-                  ),
-              )}
-            </AnimatePresence>
+          {/* RIGHT: Mockup Visuals */}
+          <div className="sticky top-32">
+            <BrowserMockup>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentFeature}
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 1.05, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="w-full h-full"
+                >
+                  <img
+                    src={features[currentFeature].image}
+                    alt={features[currentFeature].step}
+                    className="w-full h-full object-cover"
+                  />
+                  {/* Subtle AI Overlay effect */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent pointer-events-none" />
+                </motion.div>
+              </AnimatePresence>
+            </BrowserMockup>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
