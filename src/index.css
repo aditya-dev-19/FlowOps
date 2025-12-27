@@ -131,16 +131,16 @@
 /* src/index.css */
 @layer base {
   html {
-    scroll-behavior: smooth; /* Essential for the Navbar links */
+    scroll-behavior: smooth; /* Ensures Navbar links scroll smoothly */
   }
 
   body {
-    @apply bg-background text-foreground antialiased; /* antialiased makes text look sharper */
+    @apply bg-background text-foreground antialiased overflow-x-hidden; /* Prevents mobile horizontal scrolling */
+    width: 100%;
   }
 
-  /* Custom selection color to match your Primary color */
-  ::selection {
-    background-color: oklch(var(--primary) / 0.2);
-    color: oklch(var(--primary));
+  /* Standardize section spacing for mobile vs desktop */
+  section {
+    @apply px-4 sm:px-6 lg:px-8; /* Responsive horizontal padding */
   }
 }

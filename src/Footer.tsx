@@ -1,6 +1,3 @@
-import React from 'react';
-import type { ComponentProps, ReactNode } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
 import { FacebookIcon, InstagramIcon, LinkedinIcon, YoutubeIcon, Zap } from 'lucide-react';
 
 interface FooterLink {
@@ -54,67 +51,59 @@ const footerLinks: FooterSection[] = [
 ];
 
 export function Footer() {
-	return (
-		<footer className="md:rounded-t-6xl relative w-full max-w-9xl mx-auto flex flex-col items-center justify-center rounded-t-4xl border-t bg-[radial-gradient(35%_128px_at_50%_0%,theme(backgroundColor.white/8%),transparent)] px-6 py-12 lg:py-16">
-			<div className="bg-foreground/20 absolute top-0 right-1/2 left-1/2 h-px w-1/3 -translate-x-1/2 -translate-y-1/2 rounded-full blur" />
+  return (
+    <footer className="relative w-full border-t border-border/50 bg-background/40 backdrop-blur-xl px-4 py-12 md:py-20">
+      <div className="container mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-12 lg:gap-8">
+          
+          {/* Brand Info: Centered on mobile, Left-aligned on desktop */}
+          <div className="flex flex-col items-center md:items-start space-y-4 xl:col-span-2">
+            <div className="flex items-center gap-2">
+              <Zap className="size-8 text-yellow-500" />
+              <span className="text-2xl font-bold tracking-tight">FlowOps</span>
+            </div>
+            <p className="text-muted-foreground text-sm max-w-xs text-center md:text-left">
+              The ultimate automation engine for modern startups. Build, deploy, and scale with ease.
+            </p>
+            <div className="flex gap-4 pt-2">
+               {[FacebookIcon, InstagramIcon, YoutubeIcon, LinkedinIcon].map((Icon, i) => (
+                 <a key={i} href="#" className="p-2 rounded-full bg-muted/50 hover:bg-primary/10 hover:text-primary transition-colors">
+                   <Icon className="size-5" />
+                 </a>
+               ))}
+            </div>
+          </div>
 
-			<div className="grid w-full gap-8 xl:grid-cols-3 xl:gap-8">
-				<AnimatedContainer className="space-y-4">
-					<Zap className="size-8" />
-					<p className="text-muted-foreground mt-8 text-sm md:mt-0">
-						© {new Date().getFullYear()} Asme. All rights reserved.
-					</p>
-				</AnimatedContainer>
+          {/* Links Sections: 2 columns on mobile for better space usage */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:col-span-3 gap-8 w-full">
+            {footerLinks.slice(0, 3).map((section) => (
+              <div key={section.label} className="space-y-4">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-foreground">{section.label}</h3>
+                <ul className="space-y-2">
+                  {section.links.map((link) => (
+                    <li key={link.title}>
+                      <a href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                        {link.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
 
-				<div className="mt-10 grid grid-cols-2 gap-8 md:grid-cols-4 xl:col-span-2 xl:mt-0">
-					{footerLinks.map((section, index) => (
-						<AnimatedContainer key={section.label} delay={0.1 + index * 0.1}>
-							<div className="mb-10 md:mb-0">
-								<h3 className="text-xs">{section.label}</h3>
-								<ul className="text-muted-foreground mt-4 space-y-2 text-sm">
-									{section.links.map((link) => (
-										<li key={link.title}>
-											<a
-												href={link.href}
-												className="hover:text-foreground inline-flex items-center transition-all duration-300"
-											>
-												{link.icon && <link.icon className="me-1 size-4" />}
-												{link.title}
-											</a>
-										</li>
-									))}
-								</ul>
-							</div>
-						</AnimatedContainer>
-					))}
-				</div>
-			</div>
-		</footer>
-	);
-};
-
-type ViewAnimationProps = {
-	delay?: number;
-	className?: ComponentProps<typeof motion.div>['className'];
-	children: ReactNode;
-};
-
-function AnimatedContainer({ className, delay = 0.1, children }: ViewAnimationProps) {
-	const shouldReduceMotion = useReducedMotion();
-
-	if (shouldReduceMotion) {
-		return children;
-	}
-
-	return (
-		<motion.div
-			initial={{ filter: 'blur(4px)', translateY: -8, opacity: 0 }}
-			whileInView={{ filter: 'blur(0px)', translateY: 0, opacity: 1 }}
-			viewport={{ once: true }}
-			transition={{ delay, duration: 0.8 }}
-			className={className}
-		>
-			{children}
-		</motion.div>
-	);
-};
+        {/* Bottom Bar: Stacked on mobile */}
+        <div className="mt-16 pt-8 border-t border-border/20 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-muted-foreground order-2 md:order-1">
+            © {new Date().getFullYear()} FlowOps Inc. All rights reserved.
+          </p>
+          <div className="flex gap-6 text-xs text-muted-foreground order-1 md:order-2">
+            <a href="#" className="hover:text-primary">Privacy Policy</a>
+            <a href="#" className="hover:text-primary">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}

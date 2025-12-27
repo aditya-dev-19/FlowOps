@@ -50,7 +50,7 @@ const GridPattern = ({ offsetX, offsetY, size }: { offsetX: any; offsetY: any; s
  * Displays a scrolling background grid that reveals an active layer on mouse hover.
  */
 const InfiniteGrid = () => {
-  const [gridSize, setGridSize] = useState(40);
+  const [gridSize] = useState(40);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Track mouse position with Motion Values for performance (avoids React re-renders)

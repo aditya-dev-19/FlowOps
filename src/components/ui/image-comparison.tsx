@@ -4,11 +4,11 @@ import { useState, createContext, useContext } from 'react';
 import {
   motion,
   MotionValue,
-  SpringOptions,
   useMotionValue,
   useSpring,
   useTransform,
 } from 'framer-motion';
+import type { SpringOptions } from 'framer-motion';
 
 const ImageComparisonContext = createContext<
   | {
