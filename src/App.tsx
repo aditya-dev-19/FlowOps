@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css'; // Optional: for styling
 import { NavBar } from './Navbar';
 import {Hero} from './InfiniteGrid';
@@ -13,6 +13,7 @@ import { TypewriterEffect } from './CTASection';
 import { Footer } from './Footer';
 import { TestimonialsSection } from './TestimonialsSection';
 import InfiniteGrid from './InfiniteGrid';
+import { motion } from 'framer-motion';
 
 const navitems = [
   { name: 'Home', url: '#home', icon: Home },
@@ -24,6 +25,11 @@ const navitems = [
 ]
 
 const App: React.FC = () => {
+  const [isDark, setIsDark] = useState(true);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDark);
+  }, [isDark]);
   // Reveal Animation variants
   const revealVariants = {
     hidden: { opacity: 0, y: 30, filter: "blur(10px)" },
@@ -31,16 +37,32 @@ const App: React.FC = () => {
       opacity: 1, 
       y: 0, 
       filter: "blur(0px)",
-      transition: { duration: 0.8, ease: "easeOut" } 
+      transition: { duration: 0.8, ease: "easeOut" as const } 
     }
   };
   return (
     <div className='relative min-h-screen'>
       <InfiniteGrid/> {/*only infinite grid component needs to come here...rest of the content of hero section should be inside main */}
-      <NavBar items = {navitems}/>
+      <NavBar items={navitems} 
+        isDark={isDark} 
+        toggleTheme={() => setIsDark(!isDark)} />
       <main>
-        <section id = "home"><Hero/></section>
+        <motion.section 
+          id="home"
+          className="min-h-screen flex items-center justify-center" // Added for full height and centering
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={revealVariants}
+        >
+          <Hero />
+        </motion.section>
         <section id = "testimonials">
+          <motion.section id="testimonials"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={revealVariants}>
             <TestimonialsSection title={'TRUSTED BY INNOVATIVE TEAMS WORLDWIDE'} description={'No credit card required • Setup in 5 minutes • Cancel anytime'} testimonials={[{
                 author: {
                   name: "Emma Thompson",
@@ -67,9 +89,18 @@ const App: React.FC = () => {
                 },
                 text: "Finally, an AI tool that actually understands context! The accuracy in natural language processing is impressive."
               }]} />
+          </motion.section>
         </section>
-        <section id = "features"><Feature/></section>
-          <section id = "working">
+        <section id = "features"><motion.section id="features"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-200px" }}
+          variants={revealVariants}><Feature/></motion.section></section>
+          <section id = "working"><motion.section id="working"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={revealVariants}>
             <FeatureSteps features={[
               { 
                 step: 'Step 1', 
@@ -90,9 +121,19 @@ const App: React.FC = () => {
                 image: step3Image 
               },
             ]}/>
+          </motion.section>
           </section>
-        <section id = "pricing"><Pricing/></section>
-        <section id = "footer"><TypewriterEffect words={[
+        <section id = "pricing"><motion.section id="pricing"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={revealVariants} ><Pricing/></motion.section></section>
+        <section id = "footer"><motion.section id="footer"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={revealVariants}>
+          <TypewriterEffect words={[
             { text: "Ready" },
             { text: "to" },
             { text: "Automate" },
@@ -106,6 +147,7 @@ const App: React.FC = () => {
         <button className="px-8 py-3 mb-20 bg-white text-indigo-600 font-semibold rounded-lg hover:bg-gray-100 transition border-1">
           Start Free Trial
         </button>
+          </motion.section>
         </section>
       </main>
       <Footer/>

@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   motion, 
   useMotionValue, 
   useMotionTemplate, 
   useAnimationFrame 
 } from "framer-motion";
-import { MousePointerClick, Info, Sun, Moon, Zap } from 'lucide-react';
+import { MousePointerClick, Info,Zap } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -113,82 +113,53 @@ const InfiniteGrid = () => {
 };
 
 const Hero: React.FC = () => {
-  const [count, setCount] = useState(0);
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    // Sync dark mode state with HTML class
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDark]);
-
   return (
-    <div className="w-full relative min-h-screen">
-      {/* Sticky Theme Toggle */}
-      <button
-        onClick={() => setIsDark(!isDark)}
-        className="fixed top-4 right-4 z-50 p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border shadow-lg hover:scale-110 active:scale-95 transition-all flex items-center justify-center group"
-        aria-label="Toggle Theme"
-      >
-        {isDark ? (
-          <Sun className="w-5 h-5 text-yellow-500 group-hover:rotate-45 transition-transform" />
-        ) : (
-          <Moon className="w-5 h-5 text-indigo-500 group-hover:-rotate-12 transition-transform" />
-        )}
-      </button>
-
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center text-center px-4 mt-50 max-w-3xl mx-auto space-y-6 pointer-events-none">
-        <div className="space-y-2">
-          <h1 className="text-4xl md:text-6xl font-semibold tracking-tight text-foreground drop-shadow-sm flex items-center justify-center gap-4">
-            <Zap className="w-12 h-12 md:w-16 md:h-16 text-yellow-500" />
-            FlowOps
-          </h1>
-          <p className="text-lg md:text-xl font-semibold text-muted-foreground">
-            Stop Doing Repetitive Work. Start Automating Everything. <br/>
-            FlowOps helps startups and small teams automate emails, reports, and task syncing with AI-powered workflows. Save 10+ hours per week.
-          </p>
-        </div>
+    <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-3xl mx-auto space-y-6 pointer-events-none">
+      <div className="space-y-2">
+        <h1 className="text-4xl md:text-6xl font-semibold tracking-tight text-foreground drop-shadow-sm flex items-center justify-center gap-4">
+          <Zap className="w-12 h-12 md:w-16 md:h-16 text-yellow-500" />
+          FlowOps
+        </h1>
+        <p className="text-lg md:text-xl font-semibold text-muted-foreground">
+          Stop Doing Repetitive Work. Start Automating Everything. <br/>
+          FlowOps helps startups and small teams automate emails, reports, and task syncing with AI-powered workflows. Save 10+ hours per week.
+        </p>
+      </div>
+      
+      <div className="flex gap-4 pointer-events-auto">
+        <motion.button 
+            whileHover={{ 
+              scale: 1.05, 
+              y: -4,
+              backgroundColor: "#4338ca", // Indigo-700 (Deeper shift)
+              borderColor: "#6366f1",     // Indigo-500 border highlight
+              color: "#ffffff",
+              boxShadow: "0 25px 50px -12px rgba(67, 56, 202, 0.6)" // Pronounced shadow grow
+            }}
+            whileTap={{ scale: 0.98, y: 0 }}
+            transition={{ type: "spring", stiffness: 400, damping: 15 }}
+            className="flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-md shadow-md border-2 border-transparent transition-colors"
+        >
+            <MousePointerClick className="w-4 h-4" />
+            Start Free 14-Day Trial
+        </motion.button>
         
-        <div className="flex gap-4 pointer-events-auto">
-          <motion.button 
-              onClick={() => setCount(count + 1)}
-              whileHover={{ 
-                scale: 1.05, 
-                y: -4,
-                backgroundColor: "#4338ca", // Indigo-700 (Deeper shift)
-                borderColor: "#6366f1",     // Indigo-500 border highlight
-                color: "#ffffff",
-                boxShadow: "0 25px 50px -12px rgba(67, 56, 202, 0.6)" // Pronounced shadow grow
-              }}
-              whileTap={{ scale: 0.98, y: 0 }}
-              transition={{ type: "spring", stiffness: 400, damping: 15 }}
-              className="flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-md shadow-md border-2 border-transparent transition-colors"
-          >
-              <MousePointerClick className="w-4 h-4" />
-              Start Free 14-Day Trial
-          </motion.button>
-          
-          <motion.button 
-              whileHover={{ 
-                scale: 1.05, 
-                y: -4, 
-                backgroundColor: "#6d28d9", // Violet-700 (Deeper shift)
-                borderColor: "#8b5cf6",     // Violet-500 border highlight
-                color: "#ffffff",
-                boxShadow: "0 25px 50px -12px rgba(109, 40, 217, 0.6)" // Pronounced shadow grow
-              }}
-              whileTap={{ scale: 0.98, y: 0 }}
-              transition={{ type: "spring", stiffness: 400, damping: 15 }}
-              className="flex items-center gap-2 px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-md border-2 border-transparent transition-colors"
-          >
-              <Info className="w-4 h-4" />
-              Watch Demo
-          </motion.button>
-        </div>
+        <motion.button 
+            whileHover={{ 
+              scale: 1.05, 
+              y: -4, 
+              backgroundColor: "#6d28d9", // Violet-700 (Deeper shift)
+              borderColor: "#8b5cf6",     // Violet-500 border highlight
+              color: "#ffffff",
+              boxShadow: "0 25px 50px -12px rgba(109, 40, 217, 0.6)" // Pronounced shadow grow
+            }}
+            whileTap={{ scale: 0.98, y: 0 }}
+            transition={{ type: "spring", stiffness: 400, damping: 15 }}
+            className="flex items-center gap-2 px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-md border-2 border-transparent transition-colors"
+        >
+            <Info className="w-4 h-4" />
+            Watch Demo
+        </motion.button>
       </div>
     </div>
   );

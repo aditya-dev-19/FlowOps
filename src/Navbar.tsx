@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import type { LucideIcon } from "lucide-react"
+import { Sun, Moon, type LucideIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface NavItem {
   name: string
@@ -11,32 +12,18 @@ interface NavItem {
 interface NavBarProps {
   items: NavItem[]
   className?: string
+  isDark: boolean;      // Prop to track current theme
+  toggleTheme: () => void; // Prop to trigger theme switch
 }
 
-// Utility function to merge classNames
-function cn(...classes: (string | undefined | null | false)[]) {
-  return classes.filter(Boolean).join(' ')
-}
-
-export function NavBar({ items, className }: NavBarProps) {
+export function NavBar({ items, className, isDark, toggleTheme }: NavBarProps) {
   const [activeTab, setActiveTab] = useState(items[0].name)
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-
-    handleResize()
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
 
   // Intersection Observer to detect which section is in view
   useEffect(() => {
     const observerOptions = {
       root: null,
-      rootMargin: '-50% 0px -50% 0px', // Trigger when section is in the middle of viewport
+      rootMargin: '-50% 0px -50% 0px',
       threshold: 0
     }
 
@@ -54,7 +41,6 @@ export function NavBar({ items, className }: NavBarProps) {
 
     const observer = new IntersectionObserver(observerCallback, observerOptions)
 
-    // Observe all sections that match the navigation URLs
     items.forEach((item) => {
       if (item.url.startsWith('#')) {
         const sectionId = item.url.substring(1)
@@ -65,23 +51,19 @@ export function NavBar({ items, className }: NavBarProps) {
       }
     })
 
-    return () => {
-      observer.disconnect()
-    }
+    return () => observer.disconnect()
   }, [items])
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, itemName: string, url: string) => {
     e.preventDefault()
     setActiveTab(itemName)
     
-    // Smooth scroll to section if it's an anchor link
     if (url.startsWith('#')) {
       const element = document.querySelector(url)
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
     } else {
-      // Navigate to external URL
       window.location.href = url
     }
   }
@@ -93,7 +75,7 @@ export function NavBar({ items, className }: NavBarProps) {
         className,
       )}
     >
-      <div className="flex items-center gap-3 bg-background/5 border border-border backdrop-blur-lg py-1 px-1 rounded-full shadow-lg">
+      <div className="flex items-center gap-1 bg-background/5 border border-border backdrop-blur-lg py-1 px-1 rounded-full shadow-lg">
         {items.map((item) => {
           const Icon = item.icon
           const isActive = activeTab === item.name
@@ -104,15 +86,16 @@ export function NavBar({ items, className }: NavBarProps) {
               href={item.url}
               onClick={(e) => handleClick(e, item.name, item.url)}
               className={cn(
-                "relative cursor-pointer text-sm font-semibold px-6 py-2 rounded-full transition-colors",
-                "text-foreground/80 hover:text-primary",
-                isActive && "bg-muted text-primary",
+                "relative cursor-pointer text-sm font-semibold px-4 md:px-6 py-2 rounded-full transition-all duration-300",
+                "text-foreground/70 hover:text-primary",
+                isActive && "text-primary",
               )}
             >
               <span className="hidden md:inline">{item.name}</span>
               <span className="md:hidden">
                 <Icon size={18} strokeWidth={2.5} />
               </span>
+              
               {isActive && (
                 <motion.div
                   layoutId="lamp"
@@ -134,6 +117,21 @@ export function NavBar({ items, className }: NavBarProps) {
             </a>
           )
         })}
+
+        {/* Theme Toggle Button with Vertical Separator */}
+        <div className="flex items-center pl-1 border-l border-border/50 ml-1">
+          <button
+            onClick={toggleTheme}
+            className="p-2 ml-1 rounded-full text-foreground/70 hover:text-primary hover:bg-primary/10 transition-all duration-300"
+            aria-label="Toggle theme"
+          >
+            {isDark ? (
+              <Sun size={18} strokeWidth={2.5} className="text-yellow-500" />
+            ) : (
+              <Moon size={18} strokeWidth={2.5} className="text-indigo-500" />
+            )}
+          </button>
+        </div>
       </div>
     </div>
   )
